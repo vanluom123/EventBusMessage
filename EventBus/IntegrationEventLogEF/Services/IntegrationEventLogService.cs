@@ -9,10 +9,10 @@ public class IntegrationEventLogService : IIntegrationEventLogService, IDisposab
     private readonly List<Type> _eventTypes;
     private volatile bool _disposedValue;
 
-    public IntegrationEventLogService(DbConnection dbConnection)
+    private IntegrationEventLogService(DbConnection dbConnection)
     {
         _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
-        _integrationEventLogContext = new IntegrationEventLogContext(
+        _integrationEventLogContext = IntegrationEventLogContext.CreateInstance(
             new DbContextOptionsBuilder<IntegrationEventLogContext>()
                 .UseSqlServer(_dbConnection)
                 .Options);
@@ -22,6 +22,9 @@ public class IntegrationEventLogService : IIntegrationEventLogService, IDisposab
             .Where(t => t.Name.EndsWith(nameof(IntegrationEvent)))
             .ToList();
     }
+
+    public static IntegrationEventLogService CreateInstance(DbConnection dbConnection)
+        => new IntegrationEventLogService(dbConnection);
 
     public async Task<IEnumerable<IntegrationEventLogEntry>> RetrieveEventLogsPendingToPublishAsync(Guid transactionId)
     {
@@ -43,7 +46,7 @@ public class IntegrationEventLogService : IIntegrationEventLogService, IDisposab
     {
         if (transaction == null) throw new ArgumentNullException(nameof(transaction));
 
-        var eventLogEntry = new IntegrationEventLogEntry(@event, transaction.TransactionId);
+        var eventLogEntry = IntegrationEventLogEntry.CreateInstance(@event, transaction.TransactionId);
 
         _integrationEventLogContext.Database.UseTransaction(transaction.GetDbTransaction());
         _integrationEventLogContext.IntegrationEventLogs.Add(eventLogEntry);

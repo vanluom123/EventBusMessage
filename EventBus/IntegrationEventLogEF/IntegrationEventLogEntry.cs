@@ -5,7 +5,8 @@ namespace IntegrationEventLogEF;
 public class IntegrationEventLogEntry
 {
     private IntegrationEventLogEntry() { }
-    public IntegrationEventLogEntry(IntegrationEvent @event, Guid transactionId)
+    
+    private IntegrationEventLogEntry(IntegrationEvent @event, Guid transactionId)
     {
         EventId = @event.Id;
         CreationTime = @event.CreationDate;
@@ -18,6 +19,13 @@ public class IntegrationEventLogEntry
         TimesSent = 0;
         TransactionId = transactionId.ToString();
     }
+
+    public static IntegrationEventLogEntry CreateInstance(IntegrationEvent @event, Guid transactionId)
+        => new IntegrationEventLogEntry(@event, transactionId);
+    
+    public static IntegrationEventLogEntry CreateInstance()
+        => new IntegrationEventLogEntry();
+    
     public Guid EventId { get; private set; }
     public string EventTypeName { get; private set; }
     [NotMapped]

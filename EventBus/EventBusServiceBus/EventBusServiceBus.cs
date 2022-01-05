@@ -131,7 +131,7 @@ public class EventBusServiceBus : IEventBus, IDisposable
         _subsManager.RemoveDynamicSubscription<TH>(eventName);
     }
 
-    private async Task RegisterSubscriptionClientMessageHandlerAsync()
+    public async Task RegisterSubscriptionClientMessageHandlerAsync()
     {
         _processor.ProcessMessageAsync +=
             async (args) =>
@@ -146,7 +146,17 @@ public class EventBusServiceBus : IEventBus, IDisposable
                 }
             };
 
-        _processor.ProcessErrorAsync += ErrorHandler;
+        _processor.ProcessErrorAsync += (args) =>
+        {
+            var ex = args.Exception;
+            var context = args.ErrorSource;
+
+            _logger.LogError(ex, "ERROR handling message: {ExceptionMessage} - Context: {@ExceptionContext}",
+                ex.Message,
+                context);
+
+            return Task.CompletedTask;
+        };
         await _processor.StartProcessingAsync();
     }
 
@@ -154,17 +164,6 @@ public class EventBusServiceBus : IEventBus, IDisposable
     {
         _subsManager.Clear();
         _processor.CloseAsync().GetAwaiter().GetResult();
-    }
-
-    private Task ErrorHandler(ProcessErrorEventArgs args)
-    {
-        var ex = args.Exception;
-        var context = args.ErrorSource;
-
-        _logger.LogError(ex, "ERROR handling message: {ExceptionMessage} - Context: {@ExceptionContext}", ex.Message,
-            context);
-
-        return Task.CompletedTask;
     }
 
     private async Task<bool> ProcessEvent(string eventName, string message)
