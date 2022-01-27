@@ -1,4 +1,7 @@
-﻿namespace EventBusRabbitMQ;
+﻿using System;
+using RabbitMQ.Client;
+
+namespace RabbitMQServiceBus;
 
 public interface IRabbitMQPersistentConnection
     : IDisposable

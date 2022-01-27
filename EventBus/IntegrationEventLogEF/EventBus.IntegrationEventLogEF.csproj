@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>IntegrationEventLogEF</RootNamespace>
+    <RootNamespace>EventBus.IntegrationEventLogEF</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\EventBus\EventBus.Core.csproj" />
   </ItemGroup>
 
 </Project>

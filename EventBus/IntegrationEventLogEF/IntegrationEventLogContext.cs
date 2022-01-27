@@ -1,14 +1,14 @@
-﻿namespace IntegrationEventLogEF;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace IntegrationEventLogEF;
 
 public class IntegrationEventLogContext : DbContext
 {
-    private IntegrationEventLogContext(DbContextOptions<IntegrationEventLogContext> options) : base(options)
+    public IntegrationEventLogContext(DbContextOptions<IntegrationEventLogContext> options) : base(options)
     {
     }
 
-    public static IntegrationEventLogContext CreateInstance(DbContextOptions<IntegrationEventLogContext> options)
-        => new IntegrationEventLogContext(options);
-    
     public DbSet<IntegrationEventLogEntry> IntegrationEventLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

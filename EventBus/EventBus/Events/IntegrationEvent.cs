@@ -1,4 +1,7 @@
-﻿namespace EventBus.Events;
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace EventBus.Events;
 
 public record IntegrationEvent
 {        

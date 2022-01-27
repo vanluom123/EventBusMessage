@@ -1,4 +1,7 @@
-﻿namespace EventBus.Extensions;
+﻿using System;
+using System.Linq;
+
+namespace EventBus.Extensions;
 
 public static class GenericTypeExtensions
 {

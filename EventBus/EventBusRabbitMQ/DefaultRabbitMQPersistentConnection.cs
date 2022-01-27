@@ -1,4 +1,14 @@
-﻿namespace EventBusRabbitMQ;
+﻿using System;
+using System.IO;
+using System.Net.Sockets;
+using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Retry;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
+
+namespace RabbitMQServiceBus;
 
 public class DefaultRabbitMQPersistentConnection
     : IRabbitMQPersistentConnection

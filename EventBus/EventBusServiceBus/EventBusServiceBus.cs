@@ -1,8 +1,16 @@
+using System;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Autofac;
+using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.Events;
+using Microsoft.Extensions.Logging;
 
-namespace EventBusServiceBus;
+namespace AzureEventBusServiceBus;
 
 public class EventBusServiceBus : IEventBus, IDisposable
 {
@@ -17,13 +25,13 @@ public class EventBusServiceBus : IEventBus, IDisposable
     private readonly string AUTOFAC_SCOPE_NAME = "eshop_event_bus";
     private const string INTEGRATION_EVENT_SUFFIX = "IntegrationEvent";
 
-    private EventBusServiceBus(IServiceBusPersisterConnection serviceBusPersisterConnection,
+    public EventBusServiceBus(IServiceBusPersisterConnection serviceBusPersisterConnection,
         ILogger<EventBusServiceBus> logger, IEventBusSubscriptionsManager subsManager, ILifetimeScope autofac,
         string subscriptionClientName)
     {
         _serviceBusPersisterConnection = serviceBusPersisterConnection;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _subsManager = subsManager ?? InMemoryEventBusSubscriptionsManager.CreateInstance();
+        _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
         _autofac = autofac;
         _subscriptionName = subscriptionClientName;
         _sender = _serviceBusPersisterConnection.TopicClient.CreateSender(_topicName);
@@ -33,14 +41,6 @@ public class EventBusServiceBus : IEventBus, IDisposable
 
         RemoveDefaultRule();
         RegisterSubscriptionClientMessageHandlerAsync().GetAwaiter().GetResult();
-    }
-
-    public static EventBusServiceBus CreateInstance(IServiceBusPersisterConnection serviceBusPersisterConnection,
-        ILogger<EventBusServiceBus> logger, IEventBusSubscriptionsManager subsManager, ILifetimeScope autofac,
-        string subscriptionClientName)
-    {
-        return new EventBusServiceBus(serviceBusPersisterConnection, logger, subsManager, autofac,
-            subscriptionClientName);
     }
 
     public void Publish(IntegrationEvent @event)

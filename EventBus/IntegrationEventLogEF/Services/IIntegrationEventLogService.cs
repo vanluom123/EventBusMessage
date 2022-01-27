@@ -1,4 +1,8 @@
-﻿using EventBus.Events;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using EventBus.Events;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace IntegrationEventLogEF.Services;
 

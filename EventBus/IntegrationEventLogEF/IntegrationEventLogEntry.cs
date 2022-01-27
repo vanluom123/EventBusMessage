@@ -1,12 +1,16 @@
-﻿using EventBus.Events;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text.Json;
+using EventBus.Events;
 
 namespace IntegrationEventLogEF;
 
 public class IntegrationEventLogEntry
 {
-    private IntegrationEventLogEntry() { }
+    public IntegrationEventLogEntry() { }
     
-    private IntegrationEventLogEntry(IntegrationEvent @event, Guid transactionId)
+    public IntegrationEventLogEntry(IntegrationEvent @event, Guid transactionId)
     {
         EventId = @event.Id;
         CreationTime = @event.CreationDate;
@@ -19,12 +23,6 @@ public class IntegrationEventLogEntry
         TimesSent = 0;
         TransactionId = transactionId.ToString();
     }
-
-    public static IntegrationEventLogEntry CreateInstance(IntegrationEvent @event, Guid transactionId)
-        => new IntegrationEventLogEntry(@event, transactionId);
-    
-    public static IntegrationEventLogEntry CreateInstance()
-        => new IntegrationEventLogEntry();
     
     public Guid EventId { get; private set; }
     public string EventTypeName { get; private set; }

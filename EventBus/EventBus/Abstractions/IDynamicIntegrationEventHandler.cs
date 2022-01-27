@@ -1,4 +1,6 @@
-﻿namespace EventBus.Abstractions;
+﻿using System.Threading.Tasks;
+
+namespace EventBus.Abstractions;
 
 public interface IDynamicIntegrationEventHandler
 {

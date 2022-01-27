@@ -1,4 +1,10 @@
-﻿namespace EventBus;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EventBus.Abstractions;
+using EventBus.Events;
+
+namespace EventBus;
 
 public partial class InMemoryEventBusSubscriptionsManager
 {
@@ -7,15 +13,10 @@ public partial class InMemoryEventBusSubscriptionsManager
 
     public event EventHandler<string> OnEventRemoved;
 
-    private InMemoryEventBusSubscriptionsManager()
+    public InMemoryEventBusSubscriptionsManager()
     {
         _handlers = new Dictionary<string, List<SubscriptionInfo>>();
         _eventTypes = new List<Type>();
-    }
-
-    public static InMemoryEventBusSubscriptionsManager CreateInstance()
-    {
-        return new InMemoryEventBusSubscriptionsManager();
     }
 
     public bool IsEmpty => _handlers is { Count: 0 };

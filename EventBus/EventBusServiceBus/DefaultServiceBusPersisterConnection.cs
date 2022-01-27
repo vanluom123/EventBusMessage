@@ -1,4 +1,7 @@
-﻿namespace EventBusServiceBus;
+﻿using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
+
+namespace AzureEventBusServiceBus;
 
 public class DefaultServiceBusPersisterConnection : IServiceBusPersisterConnection
 {
@@ -7,16 +10,11 @@ public class DefaultServiceBusPersisterConnection : IServiceBusPersisterConnecti
     private readonly ServiceBusAdministrationClient _subscriptionClient;
     private bool _disposed;
 
-    private DefaultServiceBusPersisterConnection(string serviceBusConnectionString)
+    public DefaultServiceBusPersisterConnection(string serviceBusConnectionString)
     {
         _serviceBusConnectionString = serviceBusConnectionString;
         _subscriptionClient = new ServiceBusAdministrationClient(_serviceBusConnectionString);
         _topicClient = new ServiceBusClient(_serviceBusConnectionString);
-    }
-
-    public static DefaultServiceBusPersisterConnection CreateInstance(string serviceBusConnectionString)
-    {
-        return new DefaultServiceBusPersisterConnection(serviceBusConnectionString);
     }
 
     public ServiceBusClient TopicClient

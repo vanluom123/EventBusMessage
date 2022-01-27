@@ -1,4 +1,9 @@
-﻿namespace EventBus;
+﻿using System;
+using System.Collections.Generic;
+using EventBus.Abstractions;
+using EventBus.Events;
+
+namespace EventBus;
 
 public interface IEventBusSubscriptionsManager
 {

@@ -1,9 +1,21 @@
-﻿using EventBus;
+﻿using System;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Autofac;
+using EventBus;
 using EventBus.Abstractions;
 using EventBus.Events;
 using EventBus.Extensions;
+using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Retry;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 
-namespace EventBusRabbitMQ;
+namespace RabbitMQServiceBus;
 
 public class EventBusRabbitMQ : IEventBus, IDisposable
 {
@@ -19,23 +31,17 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
     private IModel _consumerChannel;
     private string _queueName;
 
-    private EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
+    public EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
         ILifetimeScope autofac, IEventBusSubscriptionsManager subsManager, string queueName = null, int retryCount = 5)
     {
         _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _subsManager = subsManager ?? InMemoryEventBusSubscriptionsManager.CreateInstance();
+        _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
         _queueName = queueName;
         _consumerChannel = CreateConsumerChannel();
         _autofac = autofac;
         _retryCount = retryCount;
         _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
-    }
-
-    public static EventBusRabbitMQ CreateInstance(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
-        ILifetimeScope autofac, IEventBusSubscriptionsManager subsManager, string queueName = null, int retryCount = 5)
-    {
-        return new EventBusRabbitMQ(persistentConnection, logger, autofac, subsManager, queueName, retryCount);
     }
 
     private void SubsManager_OnEventRemoved(object sender, string eventName)
@@ -277,7 +283,15 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
 
                         await Task.Yield();
-                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
+                        var metIn = concreteType.GetMethod("Handle");
+                        if (metIn != null)
+                        {
+                            var invoke = metIn.Invoke(handler, new object[] { integrationEvent });
+                            if (invoke != null)
+                            {
+                                await (Task)invoke;
+                            }
+                        }
                     }
                 }
             }

@@ -1,4 +1,8 @@
-﻿namespace IntegrationEventLogEF.Utilities;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+namespace IntegrationEventLogEF.Utilities;
 
 public class ResilientTransaction
 {
@@ -15,11 +19,9 @@ public class ResilientTransaction
         var strategy = _context.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(async () =>
         {
-            using (var transaction = _context.Database.BeginTransaction())
-            {
-                await action();
-                transaction.Commit();
-            }
+            await using var transaction = _context.Database.BeginTransaction();
+            await action();
+            await transaction.CommitAsync();
         });
     }
 }
