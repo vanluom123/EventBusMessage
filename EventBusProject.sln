@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Core", "EventBus\EventBus\EventBus.Core.csproj", "{F27C2F92-14C3-4A19-93BE-0D9803AB2CC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me.One.EventBus.Core", "EventBus\EventBus\Me.One.EventBus.Core.csproj", "{F27C2F92-14C3-4A19-93BE-0D9803AB2CC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.ServiceBus", "EventBus\EventBusServiceBus\EventBus.ServiceBus.csproj", "{63CDF22D-051A-4F9C-AB6B-40E2D210FC0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me.One.EventBus.ServiceBus", "EventBus\EventBusServiceBus\Me.One.EventBus.ServiceBus.csproj", "{63CDF22D-051A-4F9C-AB6B-40E2D210FC0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "EventBus\EventBusRabbitMQ\EventBus.RabbitMQ.csproj", "{9B8A6E02-E40A-4F6F-B43F-1DC3F92B4AE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me.One.EventBus.RabbitMQ", "EventBus\EventBusRabbitMQ\Me.One.EventBus.RabbitMQ.csproj", "{9B8A6E02-E40A-4F6F-B43F-1DC3F92B4AE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Tests", "EventBus\EventBus.Tests\EventBus.Tests.csproj", "{43B4634C-2F53-414C-A88E-A3773556FF8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.IntegrationEventLogEF", "EventBus\IntegrationEventLogEF\EventBus.IntegrationEventLogEF.csproj", "{CFE357F8-B417-434E-957F-D2A9FDF917F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me.One.EventBus.IntegrationEventLogEF", "EventBus\IntegrationEventLogEF\Me.One.EventBus.IntegrationEventLogEF.csproj", "{CFE357F8-B417-434E-957F-D2A9FDF917F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Extensions", "EventBus\EventBusExtensions\EventBus.Extensions.csproj", "{9328D0D5-6D75-4B5C-B784-D6F4ACE98A54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me.One.EventBus.Extensions", "EventBus\EventBusExtensions\Me.One.EventBus.Extensions.csproj", "{9328D0D5-6D75-4B5C-B784-D6F4ACE98A54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

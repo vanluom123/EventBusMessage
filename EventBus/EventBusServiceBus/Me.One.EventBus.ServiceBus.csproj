@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventBus\EventBus.Core.csproj" />
+    <ProjectReference Include="..\EventBus\Me.One.EventBus.Core.csproj" />
   </ItemGroup>
 
 </Project>

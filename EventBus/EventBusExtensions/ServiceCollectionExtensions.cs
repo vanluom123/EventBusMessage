@@ -46,42 +46,34 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddEventBus(this IServiceCollection services, bool IsServiceBus = false)
+    private static bool IsExistingEventBusService(IServiceCollection services)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
         // Get service provider from the provided IServiceCollection
         IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        // Get Event Bus service
-        IEventBus eventBus = serviceProvider.GetRequiredService<IEventBus>();
+        // Get EventBus
+        IEventBus eventBus = serviceProvider.GetService<IEventBus>();
 
-        // Event Bus has not been registered yet
-        if (eventBus == null)
-        {
-            if (IsServiceBus)
-            {
-                AddAzureServiceBus(services);
-            }
-            else
-            {
-                AddRabbitMQServiceBus(services);
-            }
-        }
-
-        return services;
+        return eventBus != null;
     }
 
-    private static void AddAzureServiceBus(IServiceCollection services)
+    public static IServiceCollection AddAzureServiceBus(this IServiceCollection services, Action<AzureServiceBusSettings> busOpts)
     {
-        services.AddOptions<AzureServiceBusOptions>();
+        if (services == null)
+        {
+            throw new ArgumentException(nameof(services));
+        }
+
+        services.Configure(busOpts);
+
+        if (IsExistingEventBusService(services))
+        {
+            return services;
+        }
 
         services.AddSingleton<IServiceBusPersisterConnection>(sp =>
         {
-            var settings = sp.GetRequiredService<IOptions<AzureServiceBusOptions>>().Value;
+            var settings = sp.GetRequiredService<IOptions<AzureServiceBusSettings>>().Value;
             var serviceBusConnection = settings.EventBusConnection;
 
             return new DefaultServiceBusPersisterConnection(serviceBusConnection);
@@ -95,21 +87,28 @@ public static class ServiceCollectionExtensions
             var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
             var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
             var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-            var settings = sp.GetRequiredService<IOptions<AzureServiceBusOptions>>().Value;
+            var settings = sp.GetRequiredService<IOptions<AzureServiceBusSettings>>().Value;
             string subscriptionName = settings.SubscriptionClientName;
 
             return new EventBusServiceBus(serviceBusPersisterConnection, logger,
                 eventBusSubcriptionsManager, iLifetimeScope, subscriptionName);
         });
+
+        return services;
     }
 
-    private static void AddRabbitMQServiceBus(IServiceCollection services)
+    public static IServiceCollection AddRabbitMQServiceBus(this IServiceCollection services, Action<RabbitMQServiceBusSettings> busOpts)
     {
-        services.AddOptions<RabbitMQServiceBusOptions>();
+        services.Configure(busOpts);
+
+        if (IsExistingEventBusService(services))
+        {
+            return services;
+        }
 
         services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
         {
-            var settings = sp.GetRequiredService<IOptions<RabbitMQServiceBusOptions>>().Value;
+            var settings = sp.GetRequiredService<IOptions<RabbitMQServiceBusSettings>>().Value;
             var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
 
             var factory = new ConnectionFactory()
@@ -141,7 +140,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
         {
-            var settings = sp.GetRequiredService<IOptions<RabbitMQServiceBusOptions>>().Value;
+            var settings = sp.GetRequiredService<IOptions<RabbitMQServiceBusSettings>>().Value;
             var subscriptionClientName = settings.SubscriptionClientName;
             var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
             var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
@@ -156,5 +155,7 @@ public static class ServiceCollectionExtensions
 
             return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
         });
+
+        return services;
     }
 }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace EventBus.Extensions
 {
-    public class AzureServiceBusOptions
+    public class AzureServiceBusSettings
     {
         public string SubscriptionClientName { get; set; }
         public string EventBusConnection { get; set; }
     }
 
-    public class RabbitMQServiceBusOptions
+    public class RabbitMQServiceBusSettings
     {
         public string SubscriptionClientName { get; set; }
         public string EventBusRetryCount { get; set; }
